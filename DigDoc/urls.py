@@ -19,5 +19,8 @@ from mainapp import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('home/<str:input>', views.text_to_speech)
+    path('home/<str:input>', views.DigDoc().text_to_speech),
+    # path('billing/', views.DigDoc),
+    path('test/', views.DigDoc().predict_op),
+
 ]
