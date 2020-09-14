@@ -22,5 +22,7 @@ urlpatterns = [
     path('home/<str:input>', views.DigDoc().text_to_speech),
     # path('billing/', views.DigDoc),
     path('test/', views.DigDoc().predict_op),
+    path('add_data/', views.DigDoc().user_view),
+
 
 ]
