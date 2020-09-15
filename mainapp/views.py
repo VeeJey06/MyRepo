@@ -11,17 +11,18 @@ import seaborn
 import matplotlib.pyplot as plt
 from django.views.decorators.csrf import csrf_exempt
 import threading
-from mainapp.models import Users
+# from /"+ self.app_name+".models import Users
+from joblib import dump, load
+import os
 
 
 class DigDoc:
     def __init__(self):
-        self.x = None
-        self.y = None
-        self.cva_path = "./Resources/sample_output.csv"
+        self.app_name = "mainapp"
+        self.cva_path = "./"+ self.app_name+"/Resources/training_data_set.csv"
         self.model = None
         self.thread = threading.Thread()
-        self.new_entries = "./Resources/Users.csv"
+        self.new_entries = "./"+ self.app_name+"/Resources/Users.csv"
 
     def text_to_speech(self, req, input):
         """
@@ -55,20 +56,18 @@ class DigDoc:
         data.to_csv(self.new_entries, index=False)
         return True
 
-    def analize(self, file):
+    def train_model(self, file):
         """
 
         :return:
         """
-        self.x = file.drop(['risk', 'age'], axis=1)
+        self.x = file.drop('risk', axis=1)
         self.y = file["risk"]
-
-    #   Train
         x_train, x_test, y_train, y_test = train_test_split(self.x, self.y, test_size=0.2)
         # sc = StandardScaler()
         # x_train = sc.transform(x_train)
         # x_test = sc.transform(x_test)
-        self.model = LogisticRegression(multi_class="multinomial", max_iter=10000, random_state=0).fit(self.x, self.y)
+        self.model = LogisticRegression(multi_class="multinomial", max_iter=10000, random_state=0).fit(x_train, y_train)
     #   Plot
     #     fig, ax = plt.subplots(figsize=(8, 8))
     #     ax.imshow(con_mat)
@@ -82,6 +81,14 @@ class DigDoc:
     #         for j in range(4):
     #             ax.text(j, i, con_mat[i, j], ha='center', va='center', color='black')
         # plt.show()
+        dump(self.model, "./"+ self.app_name+"/DigDoc_model.pkl")
+        plot1 = seaborn.displot(x="risk", data=file, legend=True)
+        plot1.savefig("./"+ self.app_name+"/Output/Total_count.png")
+        test_op = self.model.predict(x_test)
+        print("Accuracy:", accuracy_score(y_test, test_op))
+        con_mat = confusion_matrix(y_test, test_op)
+        print(con_mat)
+        print(classification_report(y_test, test_op))
         return True
 
     @csrf_exempt
@@ -92,14 +99,18 @@ class DigDoc:
         :return:
         """
         file = pandas.read_csv(self.cva_path)
-        if not self.model:
-            self.analize(file)
+        try:
+            self.model = load("./"+ self.app_name+"/DigDoc_model.pkl")
+            print("model available")
+        except:
+            print("model not available")
+            self.train_model(file)
         temp = int(req.POST.get("temp"))
         age = int(req.POST.get("age"))
         cough = int(req.POST.get("cough"))
         oxi = int(req.POST.get("oxi"))
         # data = [[temp, cough, oxi]]
-        data = numpy.array([temp, cough, oxi]).reshape(1, -1)
+        data = numpy.array([age, temp, cough, oxi]).reshape(1, -1)
         op = self.model.predict(data)
         new_row = {"age": age,
                    "temperature": temp,
@@ -113,13 +124,6 @@ class DigDoc:
         #     self.thread.join()
         # t1.start()
         # self.thread = t1
-        plot1 = seaborn.displot(x="risk", data=file, legend=True)
-        plot1.savefig("sdf.png")
-        test_op = self.model.predict(self.x)
-        print("Accuracy:", accuracy_score(self.y, test_op))
-        con_mat = confusion_matrix(self.y, test_op)
-        print(con_mat)
-        print(classification_report(self.y, test_op))
         return HttpResponse(op)
 
     @csrf_exempt
@@ -147,3 +151,6 @@ if __name__ == '__main__':
     #      }
     # a.append_data(d)
     # a.analize()
+    os.chdir("../")
+    file = pandas.read_csv(a.cva_path)
+    a.train_model(file)
