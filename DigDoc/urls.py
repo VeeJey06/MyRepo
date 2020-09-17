@@ -23,6 +23,6 @@ urlpatterns = [
     # path('billing/', views.DigDoc),
     path('api/users/<str:input>/test/', views.DigDoc().predict_op),
     path('api/users', views.DigDoc().user_view),
-    path('api/users/<str:input>',views.DigDoc().user_detail_view)
-
+    path('api/users/<str:input>',views.DigDoc().user_detail_view),
+    path('api/users/reading/<int:id>/answers',views.DigDoc().answers_view)
 ]

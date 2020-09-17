@@ -94,6 +94,22 @@ class DigDoc:
         return True
 
     @csrf_exempt
+    def answers_view(self,request,id):
+        if request.method == "POST":
+            request = json.loads(request.body.decode('utf-8'))
+            print("REQUEST =====" ,request)
+            answer1 = request[0]
+            answer2 = request[1]
+            answer3 = request[2]
+            AnswerData = Answers(reading_id=id,answer1 = answer1,answer2 = answer2,answer3 = answer3)
+            AnswerData.save()
+            return HttpResponse("Answers submitted")
+
+        answers = Answers.objects.filter(reading_id = id)
+        serialized_answers = list(answers.values())
+        return JsonResponse(serialized_answers,safe=False)
+
+    @csrf_exempt
     def predict_op(self, req, input):
         """
 
@@ -131,10 +147,15 @@ class DigDoc:
             
             reading = Reading(user_id=input,temperature=temp,age=age,cough=cough,oximeter=oxi,risk=op[0])
             reading.save()
-            return HttpResponse(op," Reading created")
+            last_reading = Reading.objects.filter(user_id=input).last()
+            print("LAST READING : ",last_reading.id,last_reading.temperature,last_reading.user_id,last_reading.pk,last_reading.oximeter,last_reading.cough)
+            # print(last_reading.values())
+            # last_reading_id = last_reading.values()[0]['id']
+            return HttpResponse(last_reading.pk)
             
         readings = Reading.objects.filter(user_id=input)
         serialized_readings = list(readings.values())
+        
         print("READINGS ----",list(readings.values()))
         return JsonResponse(serialized_readings,safe=False) 
 
