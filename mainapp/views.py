@@ -101,7 +101,7 @@ class DigDoc:
             answer1 = request[0]
             answer2 = request[1]
             answer3 = request[2]
-            AnswerData = Answers(reading_id=id,answer1 = answer1,answer2 = answer2,answer3 = answer3)
+            AnswerData = Answers(reading_id=id,travelhistory = answer1,heartpatient = answer2,familyinfected = answer3)
             AnswerData.save()
             return HttpResponse("Answers submitted")
 

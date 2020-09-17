@@ -22,9 +22,9 @@ class Reading(models.Model):
 
 class Answers(models.Model):
     reading = models.OneToOneField(Reading,on_delete=models.CASCADE,primary_key=True)
-    answer1 = models.CharField(max_length = 10,null=False)
-    answer2 = models.CharField(max_length = 10,null=False)
-    answer3 = models.CharField(max_length = 10,null=False)
+    travelhistory = models.CharField(max_length = 10,null=False)
+    heartpatient = models.CharField(max_length = 10,null=False)
+    familyinfected = models.CharField(max_length = 10,null=False)
     
 
     

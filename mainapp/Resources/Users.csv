@@ -53,3 +53,4 @@ age,temperature,cough,oximeter,risk
 55,100.0,23,90.0,High
 55,100.0,23,99.0,High
 55,100.0,9,60.0,Very High
+22,100.0,23,60.0,Very High
