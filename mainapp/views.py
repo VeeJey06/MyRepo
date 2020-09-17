@@ -2,7 +2,8 @@ from django.shortcuts import render
 from gtts import gTTS
 import pandas
 import numpy
-from django.http import HttpResponse, FileResponse
+import json
+from django.http import HttpResponse, FileResponse,JsonResponse
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, accuracy_score, confusion_matrix
@@ -14,7 +15,8 @@ import threading
 # from /"+ self.app_name+".models import Users
 from joblib import dump, load
 import os
-
+from .models import CustomUser,Reading,Answers
+from django.core import serializers
 
 class DigDoc:
     def __init__(self):
@@ -92,7 +94,7 @@ class DigDoc:
         return True
 
     @csrf_exempt
-    def predict_op(self, req):
+    def predict_op(self, req, input):
         """
 
         :param req:
@@ -105,39 +107,70 @@ class DigDoc:
         except:
             print("model not available")
             self.train_model(file)
-        temp = int(req.POST.get("temp"))
-        age = int(req.POST.get("age"))
-        cough = int(req.POST.get("cough"))
-        oxi = int(req.POST.get("oxi"))
-        # data = [[temp, cough, oxi]]
-        data = numpy.array([age, temp, cough, oxi]).reshape(1, -1)
-        op = self.model.predict(data)
-        new_row = {"age": age,
-                   "temperature": temp,
-                   "cough": cough,
-                   "oximeter": oxi,
-                   "risk": op[0]
-                   }
-        self.append_data(new_row)
-        # t1 = threading.Thread(target=self.analize, args=(file,))
-        # if self.thread.is_alive():
-        #     self.thread.join()
-        # t1.start()
-        # self.thread = t1
-        return HttpResponse(op)
+        if req.method == "POST":
+            request = json.loads(req.body.decode('utf-8'))
+            temp = float(request['temperature'])
+            age = int(request['age'])
+            cough = int(request['cough'])
+            oxi = float(request['oximeter'])
+            # data = [[temp, cough, oxi]]
+            data = numpy.array([age, temp, cough, oxi]).reshape(1, -1)
+            op = self.model.predict(data)
+            new_row = {"age": age,
+                    "temperature": temp,
+                    "cough": cough,
+                    "oximeter": oxi,
+                    "risk": op[0]
+                    }
+            self.append_data(new_row)
+            # t1 = threading.Thread(target=self.analize, args=(file,))
+            # if self.thread.is_alive():
+            #     self.thread.join()
+            # t1.start()
+            # self.thread = t1
+            
+            reading = Reading(user_id=input,temperature=temp,age=age,cough=cough,oximeter=oxi,risk=op[0])
+            reading.save()
+            return HttpResponse(op," Reading created")
+            
+        readings = Reading.objects.filter(user_id=input)
+        serialized_readings = list(readings.values())
+        print("READINGS ----",list(readings.values()))
+        return JsonResponse(serialized_readings,safe=False) 
 
     @csrf_exempt
     def user_view(self, request):
-        users = Users.objects.all()
+        users = CustomUser.objects.all()
+        
         if request.method == "POST":
-            username = request.POST.get("username")
-            email = request.POST.get("email")
-            age = request.POST.get("age")
-            UserData = Users(first_name=username, last_name=email, age=age)
+            
+            print(request.body)
+            request = json.loads(request.body.decode('utf-8'))
+            # body = json.loads(body_unicode)
+            # print(body['content'])
+            # print("REQUEST",request.POST)
+            # print("HEADERS",request.headers)
+            # print("CONTENTTYPE",request.content_type)
+            username = request["username"]
+            email = request["email"]
+            city = request["city"]
+            mobile = request["mobile"]
+            # print("USERNAME : ",username)
+            UserData = CustomUser(username=username, email=email, city=city,mobile=mobile)
             UserData.save()
-            return HttpResponse("User Created")
-        data = {"users": list(users.values('username', 'email', 'mobile', 'city'))}
-        return HttpResponse(data)
+            users = CustomUser.objects.all()
+            data = {'users':[user for user in users.values()]}
+            return JsonResponse(data)
+        data = {'users':[user for user in users.values()]}
+        return JsonResponse(data)
+
+    @csrf_exempt
+    def user_detail_view(self, request,  input):
+        user = CustomUser.objects.filter(pk=input)
+        data = user.values()[0]
+        print(data)
+        return JsonResponse(data)
+        
 
 
 if __name__ == '__main__':
