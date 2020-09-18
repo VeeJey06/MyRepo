@@ -18,6 +18,7 @@ class Reading(models.Model):
     oximeter = models.DecimalField(max_digits=5, decimal_places=2)
     cough = models.IntegerField()
     risk = models.CharField(max_length = 10)
+    created_on = models.DateTimeField(auto_now_add=True)
 
 
 class Answers(models.Model):
