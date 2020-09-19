@@ -21,8 +21,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('home/<str:input>', views.DigDoc().text_to_speech),
     # path('billing/', views.DigDoc),
-    path('test/', views.DigDoc().predict_op),
-    path('add_data/', views.DigDoc().user_view),
-
-
+    path('api/users/<str:input>/test/', views.DigDoc().predict_op),
+    path('api/users', views.DigDoc().user_view),
+    path('api/users/<str:input>',views.DigDoc().user_detail_view),
+    path('api/users/reading/<int:id>/answers',views.DigDoc().answers_detail_view),
+    path('api/users/<str:input>/test/<int:id>/',views.DigDoc().reading_detail_view),
+    path('api/users/<str:input>/answers/',views.DigDoc().user_answer_view)
 ]
