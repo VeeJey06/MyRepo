@@ -106,3 +106,35 @@ age,temperature,cough,oximeter,risk
 22,100.0,1,69.0,Medium
 22,100.0,23,69.0,Very High
 55,100.0,23,69.0,Very High
+22,100.0,23,69.0,Very High
+22,100.0,23,99.0,Medium
+22,100.0,1,69.0,Medium
+22,100.0,9,60.0,Very High
+22,100.0,23,69.0,Very High
+22,100.0,1,60.0,Medium
+55,100.0,1,99.0,Medium
+22,100.0,23,60.0,Very High
+22,100.0,23,60.0,Very High
+22,100.0,1,69.0,Medium
+22,100.0,23,60.0,Very High
+22,100.0,9,60.0,Very High
+22,100.0,9,99.0,Low
+22,100.0,23,69.0,Very High
+55,100.0,23,60.0,Very High
+22,100.0,9,60.0,Very High
+22,100.0,9,99.0,Low
+22,100.0,9,60.0,Very High
+22,100.0,9,60.0,Very High
+22,100.0,23,60.0,Very High
+55,100.0,1,60.0,Very High
+22,100.0,23,60.0,Very High
+22,100.0,1,60.0,Medium
+22,100.0,9,69.0,Medium
+22,100.0,23,60.0,Very High
+22,100.0,23,60.0,Very High
+22,100.0,9,69.0,Medium
+22,100.0,9,60.0,Very High
+10,100.0,22,90.0,Low
+22,100.0,1,60.0,Medium
+22,100.0,1,60.0,Medium
+22,100.0,23,99.0,Medium

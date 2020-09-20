@@ -26,6 +26,7 @@ class Answers(models.Model):
     travelhistory = models.CharField(max_length = 10,null=False)
     heartpatient = models.CharField(max_length = 10,null=False)
     familyinfected = models.CharField(max_length = 10,null=False)
+    shortnessbreath = models.CharField(max_length = 10,null=False)
     
 
     

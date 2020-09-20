@@ -101,7 +101,8 @@ class DigDoc:
             answer1 = request[0]
             answer2 = request[1]
             answer3 = request[2]
-            AnswerData = Answers(reading_id=id,travelhistory = answer1,heartpatient = answer2,familyinfected = answer3)
+            answer4 = request[3]
+            AnswerData = Answers(reading_id=id,travelhistory = answer1,heartpatient = answer2,familyinfected = answer3,shortnessbreath=answer4)
             AnswerData.save()
             return HttpResponse("Answers submitted")
 
@@ -185,11 +186,6 @@ class DigDoc:
             
             print(request.body)
             request = json.loads(request.body.decode('utf-8'))
-            # body = json.loads(body_unicode)
-            # print(body['content'])
-            # print("REQUEST",request.POST)
-            # print("HEADERS",request.headers)
-            # print("CONTENTTYPE",request.content_type)
             username = request["username"]
             email = request["email"]
             city = request["city"]
