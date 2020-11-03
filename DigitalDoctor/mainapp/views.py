@@ -15,13 +15,13 @@ import threading
 # from /"+ self.app_name+".models import Users
 from joblib import dump, load
 import os
-from .models import CustomUser,Reading,Answers
+# from .models import CustomUser,Reading,Answers
 from django.core import serializers
 
 class DigDoc:
     def __init__(self):
         self.app_name = "mainapp"
-        self.cva_path = "./"+ self.app_name+"/Resources/training_data_set.csv"
+        self.cva_path = "./"+ self.app_name+"/Resources/sample_output_sep_17.csv"
         self.model = None
         self.thread = threading.Thread()
         self.new_entries = "./"+ self.app_name+"/Resources/Users.csv"
