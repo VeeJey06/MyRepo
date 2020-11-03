@@ -1,0 +1,1 @@
+python .\resource\CleanupPyMods.py

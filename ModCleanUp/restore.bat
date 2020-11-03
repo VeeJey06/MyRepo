@@ -1,0 +1,1 @@
+pip install -r .\resource\modules_list.txt
